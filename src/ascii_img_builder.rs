@@ -1,0 +1,22 @@
+use crate::AsciiImageBuilder;
+use crate::AsciiImage;
+
+impl<'a> AsciiImageBuilder<'a> {
+    pub fn density_chars(&mut self, chars: Vec<char>) -> &mut Self {
+        self.density_chars = Some(chars);
+        self
+    }
+
+    pub fn include_alpha(&mut self, alpha: bool) -> &mut Self {
+        self.include_alpha = Some(alpha);
+        self
+    }
+
+    pub fn build(&self) -> AsciiImage<'a> {
+        AsciiImage{
+            image: self.image,
+            density_chars: self.density_chars.clone().unwrap_or(vec!['.',',',':','+','*','?','%','#','@']),
+            include_alpha: self.include_alpha.unwrap_or(false)
+        }
+    }
+}
