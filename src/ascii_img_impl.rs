@@ -12,7 +12,7 @@ impl<'a> AsciiImage<'a> {
         }
     }
 
-    pub fn generate_text_grayscale(&self) -> Option<String> {
+    pub fn generate_text(&self) -> Option<String> {
         let mut result = String::new();
        // println!("density_Char len: {}", self.density_chars.len());
         if self.include_alpha {

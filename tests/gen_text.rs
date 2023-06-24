@@ -16,13 +16,13 @@ fn gen_text_grayscale_diamond_sword() {
     let asc = AsciiImage::builder(&image)
         .include_alpha(true)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 
     let asc = AsciiImage::builder(&image)
         .include_alpha(false)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 }
 
@@ -37,13 +37,13 @@ fn gen_text_grayscale_rust_icon() {
     let asc = AsciiImage::builder(&image)
         .include_alpha(true)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 
     let asc = AsciiImage::builder(&image)
         .include_alpha(false)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 }
 
@@ -58,13 +58,13 @@ fn gen_text_grayscale_cactus() {
     let asc = AsciiImage::builder(&image)
         .include_alpha(true)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 
     let asc = AsciiImage::builder(&image)
         .include_alpha(false)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 }
 
@@ -79,13 +79,13 @@ fn gen_text_grayscale_every_blackwhite() {
 
     let asc = AsciiImage::builder(&image)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file1);
 
     let asc = AsciiImage::builder(&image)
         .density_chars(vec!['.',',',':','+','*','?','%','#','@','.',',',':','+','*','?','%','#','@'])
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file2);
 }
 
@@ -104,12 +104,12 @@ fn gen_text_grayscale_transparent() {
     let asc = AsciiImage::builder(&image)
         .include_alpha(true)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file);
 
     let asc = AsciiImage::builder(&image)
         .include_alpha(false)
         .build();
-    let res = asc.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
     assert_eq!(res, file_no_alpha);
 }

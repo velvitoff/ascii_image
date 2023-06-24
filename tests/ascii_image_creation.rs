@@ -15,8 +15,8 @@ fn ascii_image_density_chars_len0() {
         .density_chars(vec![])
         .build();
 
-    let res = asc.generate_text_grayscale().unwrap();
-    let res2 = asc_chars.generate_text_grayscale().unwrap();
+    let res = asc.generate_text().unwrap();
+    let res2 = asc_chars.generate_text().unwrap();
     assert_eq!(res, res2);
 }
 
@@ -73,8 +73,8 @@ fn ascii_image_density_chars_len_too_large() {
         .density_chars(chars_270)
         .build();
 
-    let res = asc_256.generate_text_grayscale().unwrap();
-    let res2 = asc_270.generate_text_grayscale().unwrap();
+    let res = asc_256.generate_text().unwrap();
+    let res2 = asc_270.generate_text().unwrap();
     assert_eq!(res, res2);
 
 }
