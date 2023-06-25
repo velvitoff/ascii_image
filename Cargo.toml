@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 thiserror = "1.0.40"
 image = "0.24.6"
+imageproc = "0.23.0"
