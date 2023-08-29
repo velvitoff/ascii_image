@@ -8,6 +8,10 @@ A simple Rust crate for transforming images into ascii art.
 <img width="640px" height="360px" src="repo_assets/landscape_ascii.png" />
 
 ```
+use image::{io::Reader as ImageReader, RgbaImage, DynamicImage, Rgba};
+use rusttype::Font;
+use image_ascii::ImageGenerator;
+
 let image = ImageReader::open("tests/data/images/landscape.jpg")
     .unwrap()
     .decode()
