@@ -1,8 +1,8 @@
 # ascii_image
 
-A simple Rust crate for transforming images into ascii art.
-This project on [Crates.io](https://crates.io/crates/image_ascii)
-This project on [Github](https://github.com/velvitoff/ascii_image)
+A simple Rust crate for transforming images into ascii art.  
+This project on [Crates.io](https://crates.io/crates/image_ascii)  
+This project on [Github](https://github.com/velvitoff/ascii_image)  
 
 ## Example
 ```rust
