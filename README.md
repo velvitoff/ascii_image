@@ -4,8 +4,8 @@ A simple Rust crate for transforming images into ascii art.
 
 ## Example
 
-<img width="308px" height="569px" src="tests/data/images/landscape.jpg" />
-<img width="308px" height="569px" src="repo_assets/landscape_ascii.png" />
+<img width="1280px" height="720px" src="tests/data/images/landscape.jpg" />
+<img width="1280px" height="720px" src="repo_assets/landscape_ascii.png" />
 
 ```
 let image = ImageReader::open("tests/data/images/landscape.jpg")
