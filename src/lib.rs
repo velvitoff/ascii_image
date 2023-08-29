@@ -1,6 +1,86 @@
-use image::{DynamicImage, GenericImageView, ImageBuffer, Rgba, RgbaImage};
-use rusttype::{Font, Scale};
+//! A library to transform images into ASCII art. Both into text and new images consisting of letters.
+//! 
+//! # Examples
+//! Generating text with default parameters
+//! ```
+//! use image::{io::Reader as ImageReader};
+//! use image_ascii::TextGenerator;
+//! 
+//! let image = ImageReader::open("tests/data/images/diamond_sword.png")
+//!     .unwrap()
+//!     .decode()
+//!     .unwrap();
+//! 
+//! let result: String = TextGenerator::new(&image).generate();
+//! ```
+//! 
+//! Generating text with custom parameters
+//! ```
+//! use image::{io::Reader as ImageReader};
+//! use image_ascii::TextGenerator;
+//! 
+//! let image = ImageReader::open("tests/data/images/diamond_sword.png")
+//!     .unwrap()
+//!     .decode()
+//!     .unwrap();
+//! 
+//! let result: String = TextGenerator::new(&image)
+//!     .set_include_alpha(false)
+//!     .set_density_chars(&['.', '/', '%', '#'])
+//!     .unwrap()
+//!     .generate();
+//! ```
+//! 
+//! Generating an image with default parameters
+//! ```
+//! use image::{io::Reader as ImageReader, RgbaImage};
+//! use rusttype::Font;
+//! use image_ascii::ImageGenerator;
+//! 
+//! let image = ImageReader::open("tests/data/images/diamond_sword.png")
+//!     .unwrap()
+//!     .decode()
+//!     .unwrap();
+//! 
+//! let bytes = std::fs::read("src/fonts/Ubuntu-Regular.ttf").unwrap();
+//! let font = Font::try_from_bytes(&bytes).unwrap();
+//! 
+//! let result: RgbaImage = ImageGenerator::new(&image, &font).generate();
+//! ```
+//! 
+//! Generating an image with custom parameters
+//! ```
+//! use image::{io::Reader as ImageReader, RgbaImage, DynamicImage, Rgba};
+//! use rusttype::Font;
+//! use image_ascii::ImageGenerator;
+//! 
+//! let image = ImageReader::open("tests/data/images/diamond_sword.png")
+//!     .unwrap()
+//!     .decode()
+//!     .unwrap();
+//! 
+//! let bytes = std::fs::read("src/fonts/Ubuntu-Regular.ttf").unwrap();
+//! let font = Font::try_from_bytes(&bytes).unwrap();
+//! 
+//! let background = DynamicImage::ImageRgba8(RgbaImage::from_fn(64, 64, |x, y| {
+//!     Rgba([x as u8, y as u8, x as u8, 255u8])
+//! }));
+//! 
+//! let result: RgbaImage = ImageGenerator::new(&image, &font)
+//!     .set_scale_x(5)
+//!     .set_scale_y(5)
+//!     .set_text_color(image_ascii::ImageGeneratorTextColor::CopyFromImage)
+//!     .set_background(image_ascii::ImageGeneratorBackground::Image(&background))
+//!     .generate();
+//!     
+//! ```
 
+extern crate image;
+extern crate rusttype;
+use crate::image::{DynamicImage, GenericImageView, Rgba, RgbaImage};
+use crate::rusttype::{Font, Scale};
+
+/// Structure used to generate ASCII art strings.
 #[derive(Debug)]
 pub struct TextGenerator<'a> {
     image: &'a DynamicImage,
@@ -9,6 +89,7 @@ pub struct TextGenerator<'a> {
 }
 
 impl<'a> TextGenerator<'a> {
+    /// TextGenerator constructor. Accepts an image to be turned into ASCII.
     pub fn new(image: &'a DynamicImage) -> Self {
         TextGenerator {
             image,
@@ -17,11 +98,17 @@ impl<'a> TextGenerator<'a> {
         }
     }
 
+    /// Set value of include_alpha.
+    /// Include_alpha defines whether the algorithm should take into account alpha values of pixels.
     pub fn set_include_alpha(&'a mut self, value: bool) -> &'a mut Self {
         self.include_alpha = value;
         self
     }
 
+    /// Set value of density_chars.
+    /// Density_chars is an array of characters used to replace pixels based on their brightness.
+    /// Default of density_chars is is ['.', ',', ':', '+', '*', '?', '%', '#', '@'].
+    /// Returns None only if length of a new array is outside of 1..255 bounds.
     pub fn set_density_chars(&'a mut self, value: &'a [char]) -> Option<&'a mut Self> {
         if value.len() == 0 || value.len() > 256 {
             return None;
@@ -30,6 +117,7 @@ impl<'a> TextGenerator<'a> {
         Some(self)
     }
 
+    /// Generates a String representing the image in ASCII art.
     pub fn generate(&'a self) -> String {
         let mut result = String::new();
         let gray_image = self.image.to_luma_alpha8();
@@ -53,18 +141,25 @@ impl<'a> TextGenerator<'a> {
     }
 }
 
+/// Enumeration of background generation methods for ImageGenerator.
 #[derive(Debug)]
 pub enum ImageGeneratorBackground<'a> {
+    /// Use solid color for background.
     Color(Rgba<u8>),
+    /// Use a custom image for background.
     Image(&'a DynamicImage),
 }
 
+/// Enumeration of possible text color for ImageGenerator.
 #[derive(Debug)]
 pub enum ImageGeneratorTextColor {
+    /// Use the same color for every character.
     Color(Rgba<u8>),
+    /// Paint every character in the same color as the source pixel.
     CopyFromImage
 }
 
+/// Structure used to generate ASCII art images
 #[derive(Debug)]
 pub struct ImageGenerator<'a> {
     image: &'a DynamicImage,
@@ -79,6 +174,7 @@ pub struct ImageGenerator<'a> {
 }
 
 impl<'a> ImageGenerator<'a> {
+    /// ImageGenerator constructor. Accept an image to be turned into ASCII art and a font.
     pub fn new(image: &'a DynamicImage, font: &'a Font) -> Self {
         ImageGenerator {
             image,
@@ -92,11 +188,17 @@ impl<'a> ImageGenerator<'a> {
         }
     }
 
+    /// Set value of include_alpha.
+    /// Include_alpha defines whether the algorithm should take into account alpha values of pixels
     pub fn include_alpha(&'a mut self, value: bool) -> &'a Self {
         self.include_alpha = value;
         self
     }
 
+    /// Set value of density_chars.
+    /// Density_chars is an array of characters used to replace pixels based on their brightness.
+    /// Default of density_chars is is ['.', ',', ':', '+', '*', '?', '%', '#', '@'].
+    /// Returns None only if length of a new array is outside of 1..255 bounds.
     pub fn set_density_chars(&'a mut self, value: &'a [char]) -> Option<&'a mut Self> {
         if value.len() == 0 || value.len() > 256 {
             return None;
@@ -105,31 +207,32 @@ impl<'a> ImageGenerator<'a> {
         Some(self)
     }
 
+    /// Set background for image. Can be a single color or a custom image.
+    /// If custom image doesn't match the size of a generated image, the generated image gets resized to match the background.
     pub fn set_background(&'a mut self, value: ImageGeneratorBackground<'a>) -> &'a mut Self {
         self.background = value;
         self
     }
 
+    /// Set text color for letters.
     pub fn set_text_color(&'a mut self, value: ImageGeneratorTextColor) -> &'a mut Self {
         self.text_color = value;
         self
     }
 
-    pub fn set_font(&'a mut self, font: &'a Font) -> &'a mut Self {
-        self.font = font;
-        self
-    }
-
+    /// Set horizontal scale for letters.
     pub fn set_scale_x(&'a mut self, value: u32) -> &'a mut Self {
         self.scale_x = value;
         self
     }
 
+    /// Set vertical scale for letters.
     pub fn set_scale_y(&'a mut self, value: u32) -> &'a mut Self {
         self.scale_y = value;
         self
     }
 
+    // Writes letters on top a received image.
     fn write_to_image(&'a self, image: &mut RgbaImage, text: &str) {
         let mut text_counter: usize = 0;
         for y in 0..self.image.height() {
@@ -159,7 +262,8 @@ impl<'a> ImageGenerator<'a> {
         }
     }
 
-    pub fn generate(&'a self) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    /// Generates an image.
+    pub fn generate(&'a self) -> RgbaImage {
         let mut text_image: RgbaImage = match self.background {
             ImageGeneratorBackground::Color(c) => RgbaImage::from_fn(
                 self.image.width() * self.scale_x,
